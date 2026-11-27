@@ -7,16 +7,23 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
+// Read every Gradle property here, at project level. Inside a task block (e.g. processResources)
+// a bare property("x") looks on the task instead of the project and fails.
+fun prop(name: String): String = project.property(name).toString()
+
 val minecraftVersion = stonecutter.current.version
-version = "${property("mod_version")}+$minecraftVersion"
-group = property("maven_group") as String
-base { archivesName.set(property("archives_base_name") as String) }
+val minecraftDependency = prop("minecraft_dependency")
+val loaderVersion = prop("loader_version")
+
+version = "${prop("mod_version")}+$minecraftVersion"
+group = prop("maven_group")
+base { archivesName.set(prop("archives_base_name")) }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${property("minecraft_version")}")
-    implementation("net.fabricmc:fabric-loader:${property("loader_version")}")
-    implementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
-    implementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
+    minecraft("com.mojang:minecraft:${prop("minecraft_version")}")
+    implementation("net.fabricmc:fabric-loader:$loaderVersion")
+    implementation("net.fabricmc.fabric-api:fabric-api:${prop("fabric_api_version")}")
+    implementation("net.fabricmc:fabric-language-kotlin:${prop("fabric_kotlin_version")}")
 }
 
 loom {
@@ -40,8 +47,8 @@ tasks.withType<JavaCompile>().configureEach { options.release.set(25) }
 tasks.processResources {
     val props = mapOf(
         "version" to project.version.toString(),
-        "minecraft_dependency" to property("minecraft_dependency").toString(),
-        "loader_version" to property("loader_version").toString(),
+        "minecraft_dependency" to minecraftDependency,
+        "loader_version" to loaderVersion,
     )
     inputs.properties(props)
     filesMatching("fabric.mod.json") { expand(props) }
