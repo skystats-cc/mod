@@ -4,6 +4,7 @@ import cc.skystats.mod.ModConfig
 import cc.skystats.mod.SkyStats
 import cc.skystats.mod.api.SkyStatsApi
 import cc.skystats.mod.auth.Auth
+import cc.skystats.mod.tracker.MoneyTracker
 import cc.skystats.mod.util.Hypixel
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
@@ -11,7 +12,7 @@ import net.minecraft.client.Minecraft
 
 /**
  * While you're on Hypixel (and have linked SkyStats), tell SkyStats every ~5 minutes that the mod is running.
- * SkyStats uses this to show "SkyStats mod" on your co-op and to keep your profiles fresh.
+ * SkyStats uses this to show "SkyStats mod" on your co-op. It no longer triggers Hypixel API lookups.
  * Players who never ran /skystats link send nothing.
  */
 object Heartbeat {
@@ -37,6 +38,8 @@ object Heartbeat {
             try {
                 val result = Auth.withToken { SkyStatsApi.heartbeat(it) }
                 intervalTicks = result.nextHeartbeatSeconds.coerceIn(60, 3600) * TICKS_PER_SECOND
+                MoneyTracker.trackingEnabled = result.trackingEnabled
+                MoneyTracker.intervalSeconds = result.snapshotEverySeconds.coerceIn(60, 3600)
             } catch (e: Exception) {
                 SkyStats.logger.debug("Heartbeat failed: {}", e.message)
             } finally {
