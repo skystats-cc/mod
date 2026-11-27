@@ -31,7 +31,7 @@ object Chat {
 
     fun show(message: Component) {
         val mc = Minecraft.getInstance()
-        mc.execute { mc.gui.chat.addMessage(message) }
+        mc.execute { mc.gui.hud.chat.addClientSystemMessage(message) } // 26.2+: chat moved under gui.hud
     }
 
     fun info(s: String) = show(line(text(s)))
