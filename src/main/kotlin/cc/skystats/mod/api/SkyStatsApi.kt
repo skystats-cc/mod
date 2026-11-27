@@ -55,8 +55,16 @@ object SkyStatsApi {
         )
 
     /** Your own coins, read from your sidebar. The only source of SkyStats money history. */
-    fun snapshot(token: String, profileId: String, purse: Double): SnapshotResult =
-        call("POST", "/v1/mod/snapshot", SnapshotResult::class.java, token, mapOf("profileId" to profileId, "purse" to purse))
+    fun snapshot(token: String, profileId: String, purse: Double, inventory: List<Map<String, Any>>): SnapshotResult =
+        call(
+            "POST", "/v1/mod/snapshot", SnapshotResult::class.java, token,
+            mapOf("profileId" to profileId, "purse" to purse, "inventory" to inventory),
+        )
+
+    /** Rare drops seen in your own chat */
+    fun events(token: String, profileId: String?, events: List<Map<String, Any>>) {
+        call("POST", "/v1/mod/events", Unit::class.java, token, mapOf("profileId" to profileId, "events" to events))
+    }
 
     fun me(token: String): Account = call("GET", "/v1/me", Account::class.java, token)
 

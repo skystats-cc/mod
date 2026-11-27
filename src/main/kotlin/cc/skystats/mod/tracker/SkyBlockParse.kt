@@ -10,6 +10,8 @@ object SkyBlockParse {
     // "Profile ID: 1b2c3d4e-...". Hypixel sends this when you join SkyBlock or switch profile.
     private val PROFILE_ID = Regex("""^Profile ID:\s*([0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12})\s*$""")
     private val FORMATTING = Regex("§.")
+    // "RARE DROP! Enchanted Diamond (+120% ✯ Magic Find)", "PET DROP! Baby Yeti", "VERY RARE DROP! (Summoning Eye)"
+    private val DROP = Regex("""^(?:(?:VERY |CRAZY |INSANE )?RARE|PET) DROP!\s+\(?([^()]+?)\)?(?:\s+\(.*\))?$""")
 
     fun stripFormatting(s: String): String = FORMATTING.replace(s, "").replace(Regex("[^\\x20-\\x7E]"), "").trim()
 
@@ -19,6 +21,10 @@ object SkyBlockParse {
             ?.replace(",", "")
             ?.toDoubleOrNull()
             ?.takeIf { it >= 0 && it < 1e13 }
+
+    /** Item name from a rare-drop chat line, or null */
+    fun rareDrop(chat: String): String? =
+        DROP.find(stripFormatting(chat))?.groupValues?.get(1)?.trim()?.takeIf { it.isNotEmpty() && it.length <= 80 }
 
     /** Profile id from one chat message, without dashes, or null */
     fun profileId(chat: String): String? =
