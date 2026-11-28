@@ -2,6 +2,7 @@ package cc.skystats.mod
 
 import cc.skystats.mod.command.SkyStatsCommand
 import cc.skystats.mod.heartbeat.Heartbeat
+import cc.skystats.mod.tracker.MoneyTracker
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -27,6 +28,7 @@ object SkyStats : ClientModInitializer {
         ModConfig.load()
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ -> SkyStatsCommand.register(dispatcher) }
         Heartbeat.register()
+        MoneyTracker.register()
         logger.info("SkyStats {} loaded (API {})", version, ModConfig.apiUrl)
     }
 

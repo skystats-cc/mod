@@ -23,7 +23,13 @@ class Account(
 class Challenge(var serverId: String = "", var expiresAt: String = "")
 class ModSession(var token: String = "", var expiresAt: String = "", var account: Account = Account())
 class ClaimResult(var linked: Boolean = false, var account: Account = Account())
-class HeartbeatResult(var ok: Boolean = false, var trackingEnabled: Boolean = true, var nextHeartbeatSeconds: Int = 300)
+class HeartbeatResult(
+    var ok: Boolean = false,
+    var trackingEnabled: Boolean = true,
+    var nextHeartbeatSeconds: Int = 300,
+    var snapshotEverySeconds: Int = 300,
+)
+class SnapshotResult(var stored: Boolean = false, var reason: String? = null)
 private class ErrorBody(var error: String? = null, var message: String? = null)
 
 /**
@@ -47,6 +53,10 @@ object SkyStatsApi {
             "POST", "/v1/mod/heartbeat", HeartbeatResult::class.java, token,
             mapOf("modVersion" to SkyStats.version, "minecraftVersion" to SkyStats.minecraftVersion),
         )
+
+    /** Your own coins, read from your sidebar. The only source of SkyStats money history. */
+    fun snapshot(token: String, profileId: String, purse: Double): SnapshotResult =
+        call("POST", "/v1/mod/snapshot", SnapshotResult::class.java, token, mapOf("profileId" to profileId, "purse" to purse))
 
     fun me(token: String): Account = call("GET", "/v1/me", Account::class.java, token)
 

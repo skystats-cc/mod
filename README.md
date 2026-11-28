@@ -12,7 +12,8 @@ Requires Fabric Loader 0.19.5+, Fabric API, [Fabric Language Kotlin](https://mod
 ## What it does
 
 - **`/skystats link <code>`** links your browser to your Minecraft account. Get the code (with a copy button) at skystats.cc/link, paste the command, click **[Confirm]** in chat.
-- **Heartbeat**: while you're on Hypixel, tells SkyStats every ~5 minutes that the mod is running, so your co-op sees "SkyStats mod" and your profiles stay fresh. Only after you've linked.
+- **Heartbeat**: while you're on Hypixel, tells SkyStats every ~5 minutes that the mod is running, so your co-op sees "SkyStats mod". Only after you've linked.
+- **Money tracking**: every ~5 minutes in SkyBlock, sends your purse (read from your sidebar) and your profile id (from Hypixel's "Profile ID:" chat line) to SkyStats. This is where your money history comes from, because Hypixel's API rules don't allow building it by polling their API. Nothing else from chat or the screen is read or sent. Only after you've linked, and never while `/skystats tracking off`.
 - `/skystats status`, `/skystats tracking on|off`, `/skystats logout`.
 
 ### How sign-in works (your login never leaves Minecraft)
@@ -51,6 +52,8 @@ src/main/kotlin/cc/skystats/mod/
   auth/Auth.kt              Mojang joinServer → SkyStats token
   command/SkyStatsCommand.kt  /skystats ...
   heartbeat/Heartbeat.kt    5-minute heartbeat while on Hypixel
+  tracker/MoneyTracker.kt   sends your purse every ~5 minutes (sidebar + profile id)
+  tracker/SkyBlockParse.kt  pure parsing of the purse and profile id lines
   util/                     chat helpers, Hypixel detection
 ```
 

@@ -6,6 +6,7 @@ import cc.skystats.mod.api.ApiException
 import cc.skystats.mod.api.SkyStatsApi
 import cc.skystats.mod.auth.Auth
 import cc.skystats.mod.util.Chat
+import cc.skystats.mod.tracker.MoneyTracker
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands
@@ -115,6 +116,7 @@ object SkyStatsCommand {
         SkyStats.io.execute {
             try {
                 val me = Auth.withToken { SkyStatsApi.setTracking(it, enabled) }
+                MoneyTracker.trackingEnabled = me.trackingEnabled
                 if (me.trackingEnabled) {
                     Chat.success("Tracking on: SkyStats records your money history.")
                 } else {
