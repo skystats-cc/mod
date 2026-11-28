@@ -10,6 +10,7 @@
     "sources": "https://github.com/skystats-cc/mod"
   },
   "license": "All-Rights-Reserved",
+  "icon": "assets/skystats/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [{ "adapter": "kotlin", "value": "cc.skystats.mod.SkyStats" }]
